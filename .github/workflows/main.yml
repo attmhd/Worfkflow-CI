@@ -40,8 +40,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add MLProject/mlruns/
-          git commit -m "Add model artifacts from workflow run [skip ci]" || echo "No changes to commit"
+          git commit --allow-empty -m "Artifacts uploaded and Docker image pushed from workflow run [skip ci]"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
