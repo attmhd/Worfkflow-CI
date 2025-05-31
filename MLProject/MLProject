@@ -1,11 +1,7 @@
 name: diabetes-training
 
-conda_env: conda.yaml
-
 entry_points:
   main:
     parameters:
-      model_name:
-        type: string
-        default: "diabetes_rf_model"
+      run_name: {type: str, default: "Random Forest Classifier"}
     command: "python modelling.py"

@@ -28,28 +28,31 @@ jobs:
         run: mlflow run MLProject
         shell: bash -l {0}
 
-      - name: Upload MLflow artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-artifacts
-          path: |
-            MLProject/mlruns/
-            MLProject/test_confusion_matrix.png
-
       - name: Commit and push model artifacts
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git commit --allow-empty -m "Artifacts uploaded and Docker image pushed from workflow run [skip ci]"
+          git add mlruns/*
+          git commit -m "Artifacts uploaded and Docker image pushed from workflow run [skip ci]"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/diabetes-model:latest .
+      - name: Get MLflow model from artifacts path
+        id: get_model
+        run: |
+          MODEL_PATH=$(fiind mlruns -type d -path '*/artifacts/rf_classifier_model' | head -n 1)
+          echo "MODEL_PATH=$MODEL_PATH" >> $GITHUB_ENV
+          echo "Model path set to: $MODEL_PATH"
 
+          
+      - name: Build Docker image
+        run: mlflow models build-docker -m ${{ env.MODEL_PATH }} -n diabetes-model --no-pull
+          
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Push Docker Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/diabetes-model:latest
+      - name: Push Docker image
+        run: |
+          docker tag diabetes-model:latest ${{ secrets.DOCKER_USERNAME }}/diabetes-model:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/diabetes-model:latest

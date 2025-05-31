@@ -79,7 +79,7 @@ def main():
     signature = infer_signature(X_test, grid_search.best_estimator_.predict(X_test))
     mlflow.sklearn.log_model(
         grid_search.best_estimator_,
-        "tuned_model",
+        "rf_classifier_model",
         signature=signature,
         input_example=X_test.iloc[:1]
     )
