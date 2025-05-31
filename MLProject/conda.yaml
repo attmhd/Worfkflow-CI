@@ -12,3 +12,6 @@ dependencies:
   - psutil==7.0.0
   - scikit-learn==1.6.1
   - scipy==1.15.3
+  - seaborn
+  - matplotlib==3.9.2
+  - imblearn
