@@ -11,7 +11,6 @@ from imblearn.over_sampling import SMOTE
 from mlflow.models import infer_signature
 
 
-
 # Define paths
 BASE_DIR = os.path.dirname(__file__)
 DATASET_PATH = os.path.join(BASE_DIR, "diabetes_dataset_processing.csv")
