@@ -5,7 +5,7 @@ conda_env: conda.yaml
 entry_points:
   main:
     parameters:
-      - name: model_name
+      model_name:
         type: string
         default: "diabetes_model_random_forest"
     command: "python modelling.py"
