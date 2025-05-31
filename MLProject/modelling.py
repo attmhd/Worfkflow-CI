@@ -17,10 +17,6 @@ BASE_DIR = os.path.dirname(__file__)
 DATASET_PATH = os.path.join(BASE_DIR, "diabetes_dataset_processing.csv")
 CONFUSION_MATRIX_PATH = os.path.join(BASE_DIR, "test_confusion_matrix.png")
 
-def setup_mlflow():
-    """Initialize MLflow tracking"""
-    mlflow.set_experiment("Diabetes Classification")
-
 def load_data():
     """Load and preprocess dataset, return train and test split"""
     df = pd.read_csv(DATASET_PATH)
@@ -70,9 +66,6 @@ def plot_confusion_matrix(y_true, y_pred, save_path):
     return save_path
 
 def main():
-    # Setup MLflow tracking
-    setup_mlflow()
-    
     # Load data (train and test split)
     X_train_resampled, y_train_resampled, X_test, y_test = load_data()
     
@@ -80,30 +73,29 @@ def main():
     grid_search = create_grid_search()
     
     mlflow.autolog(log_models=False)
-    with mlflow.start_run(run_name="Random Forest"):
-        grid_search.fit(X_train_resampled, y_train_resampled)
-    
-        # Log model and dataset with signature
-        signature = infer_signature(X_test, grid_search.best_estimator_.predict(X_test))
-        mlflow.sklearn.log_model(
-            grid_search.best_estimator_,
-            "tuned_model",
-            signature=signature,
-            input_example=X_test.iloc[:1]
-        )
-        mlflow.log_artifact(DATASET_PATH, artifact_path="data")
-        
-        # Generate and log confusion matrix on test set
-        y_pred = grid_search.best_estimator_.predict(X_test)
-        conf_matrix_path = plot_confusion_matrix(y_test, y_pred, CONFUSION_MATRIX_PATH)
-        mlflow.log_artifact(conf_matrix_path, artifact_path="confusion_matrix")
+    grid_search.fit(X_train_resampled, y_train_resampled)
 
-        # Log classification report metrics
-        report = classification_report(y_test, y_pred, output_dict=True)
-        mlflow.log_metric("test_precision", report["weighted avg"]["precision"])
-        mlflow.log_metric("test_recall", report["weighted avg"]["recall"])
-        mlflow.log_metric("test_f1_score", report["weighted avg"]["f1-score"])
-        mlflow.log_metric("test_accuracy", accuracy_score(y_test, y_pred))
+    # Log model and dataset with signature
+    signature = infer_signature(X_test, grid_search.best_estimator_.predict(X_test))
+    mlflow.sklearn.log_model(
+        grid_search.best_estimator_,
+        "tuned_model",
+        signature=signature,
+        input_example=X_test.iloc[:1]
+    )
+    mlflow.log_artifact(DATASET_PATH, artifact_path="data")
+    
+    # Generate and log confusion matrix on test set
+    y_pred = grid_search.best_estimator_.predict(X_test)
+    conf_matrix_path = plot_confusion_matrix(y_test, y_pred, CONFUSION_MATRIX_PATH)
+    mlflow.log_artifact(conf_matrix_path, artifact_path="confusion_matrix")
+
+    # Log classification report metrics
+    report = classification_report(y_test, y_pred, output_dict=True)
+    mlflow.log_metric("test_precision", report["weighted avg"]["precision"])
+    mlflow.log_metric("test_recall", report["weighted avg"]["recall"])
+    mlflow.log_metric("test_f1_score", report["weighted avg"]["f1-score"])
+    mlflow.log_metric("test_accuracy", accuracy_score(y_test, y_pred))
 
 if __name__ == "__main__":
     main()
