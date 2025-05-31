@@ -7,5 +7,5 @@ entry_points:
     parameters:
       model_name:
         type: string
-        default: "diabetes_rf_model"
+        default: "diabetes_model"
     command: "python modelling.py"
