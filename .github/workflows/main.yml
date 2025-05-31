@@ -26,6 +26,7 @@ jobs:
 
       - name: Run MLflow Project
         run: mlflow run MLProject
+        shell: bash -l {0}
 
       - name: Upload MLflow artifacts
         uses: actions/upload-artifact@v4
