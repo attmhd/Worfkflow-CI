@@ -47,7 +47,7 @@ jobs:
 
           
       - name: Build Docker image
-        run: mlflow models build-docker -m ${{ env.MODEL_PATH }} -n diabetes-model --no-pull
+        run: mlflow models build-docker -m ${{ env.MODEL_PATH }} -n diabetes-model 
           
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
