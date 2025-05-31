@@ -1,0 +1,15 @@
+artifact_uri: file:///home/runner/work/Worfkflow-CI/Worfkflow-CI/mlruns/0/b69e969e03ea4164893f2572fde19415/artifacts
+end_time: 1748698226073
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b69e969e03ea4164893f2572fde19415
+run_name: sassy-auk-23
+run_uuid: b69e969e03ea4164893f2572fde19415
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748698151915
+status: 3
+tags: []
+user_id: runner
